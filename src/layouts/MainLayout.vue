@@ -1,107 +1,86 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
-      </q-toolbar>
-    </q-header>
-
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-      content-class="bg-grey-1"
-    >
-      <q-list>
-        <q-item-label
-          header
-          class="text-grey-8"
-        >
-          Essential Links
-        </q-item-label>
-        <EssentialLink
-          v-for="link in essentialLinks"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
-    <q-page-container>
-      <router-view />
-    </q-page-container>
-  </q-layout>
+  <div>
+    <div class="coordenadas">
+      Latitude: <strong>{{ Latitude }}</strong>
+      <br />
+      Longitude: <strong>{{ Longitude }}</strong>
+      <br />
+      Precisão: <strong>{{ Precisao }}</strong>
+    </div>
+    <br />
+    <div class="foto" v-if="visible">
+      <img width="300" height="250" :src="imageSrc" />
+    </div>
+    <q-btn
+      id="btn_photo"
+      color="primary"
+      label="Get Picture"
+      @click="captureImage"
+    />
+  </div>
 </template>
 
 <script>
-import EssentialLink from 'components/EssentialLink.vue'
+import { Plugins, CameraResultType } from "@capacitor/core";
 
-const linksData = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
-];
+const { Camera } = Plugins;
+const { Geolocation } = Plugins;
 
 export default {
-  name: 'MainLayout',
-  components: { EssentialLink },
-  data () {
+  data() {
     return {
-      leftDrawerOpen: false,
-      essentialLinks: linksData
-    }
-  }
-}
+      imageSrc: "",
+      position: "determining...",
+      Latitude: "Calculando...",
+      Longitude: "Calculando...",
+      Precisao: "Calculando...",
+      visible: false,
+    };
+  },
+  methods: {
+    async captureImage() {
+      const image = await Camera.getPhoto({
+        quality: 90,
+        allowEditing: true,
+        resultType: CameraResultType.Uri,
+      });
+      this.imageSrc = image.webPath;
+      this.visible = true;
+    },
+    getCurrentPosition() {      
+      Geolocation.getCurrentPosition().then((position) => {
+        this.Latitude = position.coords.latitude;
+        this.Longitude = position.coords.longitude;
+        this.Precisao = position.coords.accuracy;        
+      });
+    },
+  },
+  mounted() {
+    this.getCurrentPosition();
+
+    this.geoId = Geolocation.watchPosition({}, (position, err) => {
+        this.Latitude = position.coords.latitude;
+        this.Longitude = position.coords.longitude;
+        this.Precisao = position.coords.accuracy;  
+    });
+  },
+  beforeDestroy() {
+    Geolocation.clearWatch(this.geoId);
+  },
+};
 </script>
+
+<style >
+.foto {
+  margin-top: 10%;
+  margin-left: 10%;
+}
+#btn_photo {
+  margin-top: 10%;
+  margin-left: 30%;
+}
+.coordenadas {
+  margin-top: 10%;
+  margin-left: 25%;
+}
+</style>
