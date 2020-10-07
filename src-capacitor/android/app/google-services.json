@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "15308248557",
+    "firebase_url": "https://pocquasar.firebaseio.com",
+    "project_id": "pocquasar",
+    "storage_bucket": "pocquasar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15308248557:android:027cd6fbe784241cd103e4",
+        "android_client_info": {
+          "package_name": "org.capacitor.quasar.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15308248557-j5uh18sppp2h76guv7ft8snf9au3l565.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL6VhwpIm7zuKamoUfreNFaiIdEw5wL_s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15308248557-j5uh18sppp2h76guv7ft8snf9au3l565.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
